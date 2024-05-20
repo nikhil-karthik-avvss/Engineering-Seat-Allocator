@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile-image {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    .profile-info {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .info-item {
+      margin-bottom: 10px;
+    }
+    .info-label {
+      font-weight: bold;
+      width: 150px;
+      display: inline-block;
+    }
+    .info-value {
+      margin-left: 10px;
+    }
+    .file-attachment {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      background-color: #e8e8e8;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .file-info {
+      flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .file-name {
+      font-weight: bold;
+    }
+    .file-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-header">
+      <h1>User Profile</h1>
+      <img src="{{ request.session.photo }}" alt="Profile Picture" class="profile-image">
+    </div>
+    <div class="profile-info">
+      <div class="info-item">
+        <span class="info-label">Name:</span>
+        <span class="info-value">{{ request.session.name }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Email ID:</span>
+        <span class="info-value">{{ request.session.email }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Student ID:</span>
+        <span class="info-value">{{ request.session.uname }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Date of Birth:</span>
+        <span class="info-value">{{ request.session.dob }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Address:</span>
+        <span class="info-value">{{ request.session.address }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Father's name:</span>
+        <span class="info-value">{{ request.session.fname }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Mother's Name:</span>
+        <span class="info-value">{{ request.session.mname }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Name of the school (12h Standard):</span>
+        <span class="info-value">{{ request.session.sch12 }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Board of study (12th standard):</span>
+        <span class="info-value">{{ request.session.brd12 }}</span>
+      </div>
+      <div class="info-item">
+      <div class="info-item">
+        <span class="info-label">Year of passing (12th standard):</span>
+        <span class="info-value">{{ request.session.year12 }}</span>
+      </div>
+        <span class="info-label">Cut-Off Marks:</span>
+        <span class="info-value">{{ request.session.cutoff }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Name of the school (10th standard):</span>
+        <span class="info-value">{{ request.session.sch10 }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Board of study (10th standard):</span>
+        <span class="info-value">{{ request.session.brd10 }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Year of Passing:</span>
+        <span class="info-value">{{ request.session.year10 }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Rank:</span>
+        <span class="info-value">{{ request.session.rank }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Allotted College:</span>
+        <span class="info-value">{{ request.session.college }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Allotted Course:</span>
+        <span class="info-value">{{ request.session.seat }}</span>
+      </div>
+      <div class="file-attachment">
+        <div class="file-info">
+          <div class="file-name">Aadhar Photocopy:</div>
+        </div>
+        <button class="file-button" onclick="openFile('{{ request.session.aadhar }}')">Open File</button>
+      </div>
+      <div class="file-attachment">
+        <div class="file-info">
+          <div class="file-name">Marksheet (12th standard)</div>
+        </div>
+        <button class="file-button" onclick="openFile('{{ request.session.cer12 }}')">Open File</button>
+      </div>
+      <div class="file-attachment">
+        <div class="file-info">
+          <div class="file-name">Marksheet (10th standard)</div>
+        </div>
+        <button class="file-button" onclick="openFile('{{ request.session.cer10 }}')">Open File</button>
+      </div>
+      <div class="file-attachment">
+        <div class="file-info">
+          <div class="file-name">Transfer Certificate</div>
+        </div>
+        <button class="file-button" onclick="openFile('{{ request.session.tc }}')">Open File</button>
+      </div>
+    </div>
+  </div>
+<script>
+    // Function to open file in the browser
+    function openFile(fileUrl) {
+      window.open(fileUrl, '_blank');
+    }
+  </script>
+</body>
+</html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var fileSize = {{ request.session.marksheet_size }}; // File size in bytes, passed from Django context
+    var fileSizeKB = (fileSize / 1024).toFixed(2); // Convert to kilobytes and round to 2 decimal places
+    var fileSizeDisplay = fileSizeKB + " KB"; // Format the size as "xx KB"
+
+    // Update the file size display in the HTML
+    document.querySelector(".file-size").textContent = "(" + fileSizeDisplay + ")";
+  });
+</script>
+

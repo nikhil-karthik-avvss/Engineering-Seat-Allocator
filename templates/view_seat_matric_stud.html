@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College List</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        /* Navigation styles */
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        nav a:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'user_profile' %}">User Profile</a>
+        <a href="/index">Common Rank List</a>
+        <a href="{% url 'view_sm' %}">Seat Matrix</a>
+        <a href="/index">Choice Filling</a>
+        <a href="/index">Allotment Order</a>
+        <a href="/index">Manual</a>
+        <a href="/index">Settings</a>
+        <a href="/index">Log-out</a>
+    </nav>
+    <div class="container">
+        <h1>College List</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>College ID</th>
+                    <th>College Name</th>
+                    <th>Course</th>
+                    <th>Intake</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for college in colleges %}
+                <tr>
+                    <td>{{ college.College_ID }}</td>
+                    <td>{{ college.College_Name }}</td>
+                    <td>{{ college.Program }}</td>
+                    <td>{{ college.Seats_Available }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

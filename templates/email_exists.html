@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Already Exists</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      max-width: 500px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .message {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .email-id {
+      font-size: 20px;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+    .contact-info {
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="message">An account with email-id: <span class="email-id">{{ email_id }}</span> already exists in our database.</div>
+    <div class="message">Kindly try again with a different mail ID.</div>
+    <div class="contact-info">If you think this is a mistake, feel free to reach us out at <span class="email-id">{{ contact_email }}</span>.</div>
+    <a href="{% url 'emailenter' %}" class="btn">Go back to registration page</a>
+  </div>
+</body>
+</html>
+

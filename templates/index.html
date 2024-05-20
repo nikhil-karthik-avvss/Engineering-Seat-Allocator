@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Seat Allocator</title>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff; /* White background for the container */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            max-width: 400px; /* Limit container width */
+            width: 100%; /* Responsive width */
+        }
+
+        h1 {
+            color: #333; /* Dark gray text color */
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column; /* Display options vertically */
+            margin-top: 20px;
+        }
+
+        .option {
+            background-color: #007bff; /* Blue background for options */
+            color: #fff; /* White text color */
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px; /* Add space between options */
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        .option:hover {
+            background-color: #0056b3; /* Darker blue background on hover */
+        }
+
+        /* Style to remove underline and blue color for links */
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Engineering Seat Allocator (Student Project)</h1>
+        <div class="options">
+            <div class="option" onclick="location.href='{% url 'emailenter' %}'">Register (Student)</div>
+            <div class="option" method="get" onclick="location.href='{% url 'student_login' %}'">Login (Student)</div>
+            <div class="option" onclick="location.href='{% url 'institute_login' %}'">Login (Institute)</div>
+        </div>
+    </div>
+</body>
+</html>
+

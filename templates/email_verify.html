@@ -1,0 +1,60 @@
+<!-- otp_verification.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <style>
+    /* CSS for background */
+    body {
+      #background-image: url('/static/images/classroom4.png');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 5px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Enter OTP</h1>
+    <form method="post" action="{% url 'verify_otp' %}">
+      {% csrf_token %}
+      <input type="text" name="otp" placeholder="Enter OTP" required>
+      <input type="hidden" name="otpv" value="{{ otpv }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <button type="submit">Verify OTP</button>
+    </form>
+  </div>
+</body>
+</html>
+

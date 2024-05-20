@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choice Filling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+            display: inline-block; /* Display as inline block to arrange sequentially */
+        }
+        nav a:hover {
+            color: #ffd700; /* Change color on hover */
+        }
+        .container {
+            padding: 20px;
+        }
+        @media screen and (max-width: 600px) {
+            .navbar a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+        .add-course-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .note-box {
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .note-box p {
+            margin: 0;
+            color: #333;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'user_profile' %}">User Profile</a>
+        <a href="{% url 'view_crl' %}">Common Rank List</a>
+        <a href="{% url 'view_sm' %}">Seat Matrix</a>
+        <a href="{% url 'choice' %}">Choice Filling</a>
+        <a href="/index">Allotment Order</a>
+        <a href="/index">Manual</a>
+        <a href="/index">Settings</a>
+        <a href="/index">Log-out</a>
+</nav>
+
+<div class="container">
+    <h1>Choice Filling</h1>
+    <div class="note-box">
+        <p>Select your preferred colleges and programs.</p>
+    </div>
+    <form action="{% url 'choice' %}" method="POST" id="choiceForm">
+        {% csrf_token %}
+        <div id="choice-container">
+            <div class="choice" id="choice-1">
+                <label for="college-id-1">Choice 1:</label>
+                <select name="college_id_1" id="college-id-1" class="college-id" onchange="clgName(this.value, 1)" required>
+                    <option value="">Select College</option>
+                    {% for college in colleges %}
+                        <option value="{{ college.College_ID }}">{{ college.College_ID }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="college-name-1">College Name:</label>
+                <input type="text" id="college-name-1" name="college_name_1" readonly>
+
+                <label for="program-1">Program:</label>
+                <select name="program_1" id="program-1" class="program-choice" required>
+                    <option value="">Select Program</option>
+                </select>
+                <button type="button" class="delete-btn" onclick="removeChoice(1)">Remove choice</button>
+            </div>
+        </div>
+        <button type="button" class="add-course-btn" id="add-choice">Add another choice</button>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<script>
+    function clgName(clgId, count) {
+    var colleges = {
+        {% for college in colleges %}
+            "{{ college.College_ID }}": "{{ college.College_Name|escapejs }}",
+        {% endfor %}
+    };
+
+    var clg = colleges[clgId] || "No name found for this ID";
+    var element = document.getElementById("college-name-" + count);
+    element.value = clg;
+
+    // Fetch programs based on college ID
+    fetch(`/account/get_programs/?college_id=${clgId}`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetched programs:', data);
+            var programSelect = document.getElementById("program-" + count);
+            programSelect.innerHTML = '<option value="">Select Program</option>';
+            data.programs.forEach(program => {
+                var alreadySelectedPrograms = document.querySelectorAll('.program-choice option:checked');
+                var programExists = Array.from(alreadySelectedPrograms).some(option => option.value === program.Program);
+                if (!programExists) {
+                    programSelect.innerHTML += `<option value="${program.Program}">${program.Program}</option>`;
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching programs:', error);
+        });
+}
+
+
+    function removeChoice(choiceNumber) {
+        const choiceContainer = document.getElementById('choice-container');
+        const choiceToRemove = document.getElementById('choice-' + choiceNumber);
+        if (choiceToRemove) {
+            choiceToRemove.remove();
+            // Renumber choices after the deleted choice
+            const remainingChoices = choiceContainer.querySelectorAll('.choice');
+            remainingChoices.forEach((choice, index) => {
+                const newChoiceNumber = index + 1;
+                choice.querySelector('label').innerText = 'Choice ' + newChoiceNumber + ':';
+                choice.querySelector('.delete-btn').setAttribute('onclick', 'removeChoice(' + newChoiceNumber + ')');
+                choice.id = 'choice-' + newChoiceNumber;
+                choice.querySelector('.college-id').name = 'college_id_' + newChoiceNumber;
+                choice.querySelector('.college-id').id = 'college-id-' + newChoiceNumber;
+                choice.querySelector('.college-id').setAttribute('onchange', 'clgName(this.value, ' + newChoiceNumber + ')');
+                choice.querySelector('input[type="text"]').name = 'college_name_' + newChoiceNumber;
+                choice.querySelector('input[type="text"]').id = 'college-name-' + newChoiceNumber;
+                choice.querySelector('.program-choice').name = 'program_' + newChoiceNumber;
+                choice.querySelector('.program-choice').id = 'program-' + newChoiceNumber;
+            });
+        }
+    }
+
+    document.getElementById('add-choice').addEventListener('click', function () {
+        const choiceCount = document.querySelectorAll('.choice').length + 1;
+        const newChoice = document.createElement('div');
+        newChoice.className = 'choice';
+        newChoice.id = 'choice-' + choiceCount;
+        newChoice.innerHTML = `
+            <label for="college-id-${choiceCount}">Choice ${choiceCount}:</label>
+            <select name="college_id_${choiceCount}" id="college-id-${choiceCount}" class="college-id" onchange="clgName(this.value, ${choiceCount})" required>
+                <option value="">Select College</option>
+                ${document.querySelector('.college-id').innerHTML}
+            </select>
+
+            <label for="college-name-${choiceCount}">College Name:</label>
+            <input type="text" id="college-name-${choiceCount}" name="college_name_${choiceCount}" readonly>
+
+            <label for="program-${choiceCount}">Program:</label>
+            <select name="program_${choiceCount}" id="program-${choiceCount}" class="program-choice" required>
+                <option value="">Select Program</option>
+            </select>
+            <button type="button" class="delete-btn" onclick="removeChoice(${choiceCount})">Remove choice</button>
+        `;
+        document.getElementById('choice-container').appendChild(newChoice);
+    });
+</script>
+
+</body>
+</html>

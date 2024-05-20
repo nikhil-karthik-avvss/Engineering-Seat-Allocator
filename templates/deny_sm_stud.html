@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #333;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Navigation styles */
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #ffd700; /* Change color on hover */
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'user_profile' %}">User Profile</a>
+        <a href="/index">Common Rank List</a>
+        <a href="{% url 'view_sm' %}">Seat Matrix</a>
+        <a href="/index">Choice Filling</a>
+        <a href="/index">Allotment Order</a>
+        <a href="/index">Manual</a>
+        <a href="/index">Settings</a>
+        <a href="/index">Log-out</a>
+    </nav>
+    <div class="container">
+        <h1>Seat Matrix Unavailable</h1>
+        <p>The seat matrix is currently unavailable. Please try again later.</p>
+    </div>
+</body>
+</html>
+

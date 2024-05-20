@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>You have been logged out.</h1>
+        <button id="homeButton">Go to website homepage</button>
+    </div>
+    <script>
+        // Broadcast logout event to all tabs
+        localStorage.setItem('logout-event', 'logout' + Math.random());
+
+        // Redirect to homepage when button is clicked
+        document.getElementById('homeButton').addEventListener('click', function() {
+            window.location.href = '/index';
+        });
+
+        // Listen for logout event
+        window.addEventListener('storage', function(event) {
+            if (event.key === 'logout-event') {
+                // Close the current tab
+                window.close();
+            }
+        });
+    </script>
+</body>
+</html>
+

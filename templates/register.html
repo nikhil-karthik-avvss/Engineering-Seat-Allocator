@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="file"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>User Registration</h2>
+    <form id="registrationForm" method="POST" action="{% url 'register_db' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="email" value="{{ email }}">
+      <div class="form-group">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Set Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="form-group">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+      </div>
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <textarea id="address" name="address" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="name">Father's Name:</label>
+        <input type="text" id="father_name" name="father_name" required>
+      </div>
+      <div class="form-group">
+        <label for="name">Mother's Name:</label>
+        <input type="text" id="mother_name" name="mother_name" required>
+      </div>
+      <!--<div class="form-group">
+        <label for="maths">Mathematics Marks:</label>
+        <input type="number" id="maths" name="maths" min="0" max="100" step="0.1" oninput="calculateCutoff()" required>
+      </div>
+      <div class="form-group">
+        <label for="physics">Physics Marks:</label>
+        <input type="number" id="physics" name="physics" min="0" max="100" step="0.1" oninput="calculateCutoff()" required>
+      </div>
+      <div class="form-group">
+        <label for="chemistry">Chemistry Marks:</label>
+        <input type="number" id="chemistry" name="chemistry" min="0" max="100" step="0.1" oninput="calculateCutoff()" required>
+      </div>
+      <div class="form-group">
+        <label for="cutoff">Cut-Off Marks:</label>
+        <input type="number" id="cutoff" name="cutoff" readonly>
+      </div>-->
+      <div class="form-group">
+        <label for="twelfth_school">Name of the school(11th and 12th):</label>
+        <input type="text" id="twelfth_school" name="twelfth_school" required>
+      </div>
+      <div class="form-group">
+        <label for="twelfth_board">Board of study (12th standard):</label>
+        <select id="twelfth_board" name="twelfth_board" required>
+          <option value="">Select Board</option>
+          {% for board in board_choices %}
+          <option value="{{ board }}">{{ board }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="twelfth_certificate">Marksheet (12th standard):</label>
+        <input type="file" id="twelfth_certificate" name="twelfth_certificate" accept=".pdf,.jpg,.jpeg" required>
+      </div>
+      <div class="form-group">
+        <label for="twelfth_year">Year of Passing (12th standard):</label>
+        <input type="number" id="twelfth_year" name="twelfth_year" min="1900" max="2099" step="1" required>
+      </div>
+      <div class="form-group">
+        <label for="tenth_school">Name of the school(10th standard):</label>
+        <input type="text" id="tenth_school" name="tenth_school" required>
+      </div>
+      <div class="form-group">
+        <label for="tenth_board">Board of study (10th standard):</label>
+        <select id="tenth_board" name="tenth_board" required>
+          <option value="">Select Board</option>
+          {% for board in board_choices %}
+          <option value="{{ board }}">{{ board }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tenth_certificate">Marksheet (10th standard):</label>
+        <input type="file" id="tenth_certificate" name="tenth_certificate" accept=".pdf,.jpg,.jpeg" required>
+      </div>
+      <div class="form-group">
+        <label for="tenth_year">Year of Passing (10th standard):</label>
+        <input type="number" id="tenth_year" name="tenth_year" min="1900" max="2099" step="1" required>
+      </div>
+      <div class="form-group">
+        <label for="photo">Transfer Certificate from School: </label>
+        <input type="file" id="tc" name="tc" accept=".pdf,.jpg,.jpeg" required>
+      </div>
+      <div class="form-group">
+        <label for="photo">Passport-size Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+      </div>
+      <div class="form-group">
+        <label for="aadhar">Aadhar Scan-Copy:</label>
+        <input type="file" id="aadhar" name="aadhar" accept=".pdf,.jpg,.jpeg" required>
+      </div>
+      <!-- Submit button -->
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+
+  <script>
+    function calculateCutoff() {
+      const maths = parseFloat(document.getElementById('maths').value);
+      const physics = parseFloat(document.getElementById('physics').value);
+      const chemistry = parseFloat(document.getElementById('chemistry').value);
+      
+      // Check if the entered marks are within the range of 0 to 100
+      if (maths >= 0 && maths <= 100 && physics >= 0 && physics <= 100 && chemistry >= 0 && chemistry <= 100) {
+        const cutoff = maths + (physics + chemistry) * 0.5;
+        document.getElementById('cutoff').value = cutoff.toFixed(2);
+      } else {
+        alert('Please enter valid marks between 0 and 100.');
+      }
+    }
+  </script>
+</body>
+</html>
+
