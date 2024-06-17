@@ -13,6 +13,7 @@ urlpatterns = [
     path('emailenter/email_verify/verify_otp/',views.verify_otp,name="verify_otp"),
     path('emailenter/email_verify/verify_otp/register/',views.register_db,name="register_db"),
     path('pass_enter/',views.pass_enter, name="pass_enter"),
-    path('pass_enter/reset_password/',views.reset_password,name="reset_password")
+    path('pass_enter/reset_password/',views.reset_password,name="reset_password"),
+    path('download_manual/',views.download_manual,name='download_manual')
     #path('pass_enter/pass_enter/',views.pass_enter,name="pass_enter")
 ]

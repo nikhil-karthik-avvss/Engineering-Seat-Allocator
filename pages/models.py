@@ -51,12 +51,20 @@ def validate_cutoff(value):
 
 class Institute(models.Model):
     College_ID = models.AutoField(primary_key=True)
+    College_Image_URL = models.URLField()
     College_Name = models.CharField(max_length=100)
     Address = models.TextField()
     Password = models.CharField(max_length=50)  # Adjust max_length as needed
     Administrator_Name = models.CharField(max_length=70)  # Adjust max_length as needed
     Email_ID = models.EmailField()
-    Contact_Number = models.CharField(max_length=10)  # Adjust max_length as needed
+    Contact_Number = models.CharField(max_length=10)# Adjust max_length as needed
+    Tution_Fee = models.IntegerField()
+    Hostel_Fee_min = models.IntegerField()
+    Hostel_Fee_max = models.IntegerField()
+    Bus_Fee = models.IntegerField()
+    Mand_Bus = models.TextField()
+    Mess_Inc = models.TextField()
+    Web = models.URLField()
     Certificate = models.FileField(upload_to='media/certificates/college/',blank=True, null=True)
     Flag = models.IntegerField()
     Log_Stat = models.IntegerField()
@@ -218,8 +226,10 @@ class Student(models.Model):
     Rank = models.IntegerField(default=0, blank=True, null=True)
     Allotted_College = models.CharField(max_length=100, default='TBD', blank=True)
     Allotted_Course = models.CharField(max_length=100, default='TBD', blank=True)
+    Course_ID = models.IntegerField()
     Log_Stat = models.IntegerField()
-
+    Allot_Stat = models.IntegerField(default=1)
+    Choice_Number = models.IntegerField(default=0)
     def __str__(self):
         return self.Name
         
@@ -319,14 +329,43 @@ class Set(models.Model):
     Allow_Create_CRL = models.IntegerField()
     Allow_CRL = models.IntegerField()
     Allot_Program = models.IntegerField()
+    ReAllot = models.IntegerField()
+    Finish = models.IntegerField()
+    DelRecords = models.IntegerField()
     Show_Allotted = models.IntegerField()
 
 class Aadhar(models.Model):
-    Number = models.IntegerField()
-
+    QR_Number = models.IntegerField()
+    Aadhar_Number = models.IntegerField()
+    Name = models.CharField(max_length=100)
+    DOB = models.DateField(default="2024-01-01")
+    Fathers_Name = models.CharField(max_length=100)
+    Mothers_Name = models.CharField(max_length=100)
+    Address = models.TextField()
+    
+    
 class MarkSheets(models.Model):
+    QR_Number = models.IntegerField()
     Aadhar_Number = models.IntegerField()
     Maths = models.IntegerField()
     Physics = models.IntegerField()
     Chemistry = models.IntegerField()
     Cutoff = models.IntegerField()
+    Name = models.CharField(max_length=100)
+    School = models.TextField()
+    Board = models.CharField(max_length=50)
+    Year = models.IntegerField()
+
+class Serv_Files(models.Model):
+    manual = models.FileField(upload_to='media/serverfiles/', blank=True, null=True)
+
+class image(models.Model):
+    flag = models.IntegerField()
+    img=models.ImageField(upload_to='media/photos/')
+    desc = models.TextField()
+    
+class Previous(models.Model):
+    Rank = models.IntegerField()
+    CutOff = models.IntegerField()
+    College = models.TextField()
+    Course = models.TextField()

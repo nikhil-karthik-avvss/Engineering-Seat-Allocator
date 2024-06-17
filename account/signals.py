@@ -1,7 +1,7 @@
 # signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from pages.models import Set, Student, RankList, ChoiceListTable, SeatMatrix
+from pages.models import Set, Student, RankList, ChoiceListTable, SeatMatrix, Previous
 from django.db.models.signals import post_save
 
 @receiver(post_save, sender=Set)
@@ -32,7 +32,7 @@ def update_ranklist_on_flag(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Set)
 def allow_seat(sender,instance,created,**kwargs):
-    if not created and instance.Allot_Program == 1:
+    if not created and instance.Allot_Program == 1 and instance.ReAllot==0:
         ranklist = RankList.objects.all()
         for rank in ranklist:
             choice_obj = ChoiceListTable.objects.filter(Student_ID=rank.ID)
@@ -40,18 +40,106 @@ def allow_seat(sender,instance,created,**kwargs):
             stud = Student.objects.filter(Student_ID=rank.ID).first()
             for choice in choice_obj:
                 sm = SeatMatrix.objects.filter(College_ID=choice.College_ID,Program=choice.Program).first()
-                print(sm)
-                if(sm.Seats_Available!=-1):
+                print(sm.College_ID,sm.Program,sm.Seats_Available)
+                if(sm.Seats_Available>0):
                     flag=1
                     sm.Seats_Available-=1
-                    
+                    stud.Choice_Number = choice.Choice_Number
                     stud.Allotted_College = choice.College
                     stud.Allotted_Course = choice.Program
+                    stud.Course_ID = sm.pk
                     stud.save()
-                    choice_obj.delete()
+                    sm.save()
+                    #choice_obj.delete()
                     break
+                sm.save()
             if(flag==0):
                 stud.Allotted_College = "Not Allotted"
                 stud.Allotted_Course = "Not Allotted"
+                stud.Choice_Number = len(SeatMatrix.objects.all())+1
                 stud.save()
+
+@receiver(post_save, sender=Set)
+def handle_reallot(sender, instance, created, **kwargs):
+    if not created and instance.ReAllot == 1:
+        ranklist = RankList.objects.all()
+        students = Student.objects.all()
+        for stud in students:
+            #print(stud.Student_ID)
+            if(stud.Allot_Stat<0):
+                college = stud.Allotted_College
+                course = stud.Allotted_Course
+                course_id = stud.Course_ID
+                sm = SeatMatrix.objects.filter(pk=course_id).first()
+                #print(course_id,course)
+                if(sm):
+                    sm.Seats_Available+=1
+                    sm.save()
+                print(sm.pk,sm.Seats_Available)
+        '''
+        allot_stat = {
+            'accept': 2,
+            'accept_upward': 3,
+            'decline': -1,
+            'decline_upward': -2,
+        }.get(action, 1)
+        '''
+        for rank in ranklist:
+            stud = Student.objects.filter(Student_ID=rank.ID).first()
+            print(stud.Student_ID)
+            print(stud.Allot_Stat==2 or stud.Allot_Stat==-1)
+            if(stud.Allot_Stat==2 or stud.Allot_Stat==-1):
+                print('B1')
+                if(stud.Allot_Stat==-1):
+                    print('B2')
+                    stud.Allotted_College = "Declined Allotment"
+                    stud.Allotted_Course = "Declined Allotment"
+                    stud.save()
+                continue
+            if (True):#instance.Allot_Program == 1:
+                # Accept and Upward scenario
+                choice_obj = ChoiceListTable.objects.filter(Student_ID=rank.ID)
+                flag = False
+                for choice in choice_obj:
+                    sm = SeatMatrix.objects.filter(College_ID=choice.College_ID, Program=choice.Program).first()
+                    if (sm and sm.Seats_Available > 0 and (choice.Choice_Number < stud.Choice_Number)):
+                        flag = True
+                        sm.Seats_Available -= 1
+                        if(stud.Allot_Stat==3):
+                            osm = SeatMatrix.objects.filter(pk=stud.Course_ID).first()
+                            osm.Seats_Available += 1
+                            osm.save()
+                        stud.Choice_Number = choice.Choice_Number
+                        stud.Allotted_College = choice.College
+                        stud.Allotted_Course = choice.Program
+                        stud.Course_ID = sm.pk
+                        stud.save()
+                        sm.save()
+                        #choice_obj.delete()
+                        break
+                
+                if not flag:
+                    if(stud.Allot_Stat==-2):
+                        stud.Allotted_College = "Lost Allotment"
+                        stud.Allotted_Course = "Lost Allotment"
+                    stud.save()
+        
+        students = Student.objects.all()
+        for stud in students:
+            psa = Previous(Rank=stud.Rank,CutOff=stud.Cut_Off_Marks,College=stud.Allotted_College,Course=stud.Allotted_Course)
+            psa.save()
+    '''
+            Rank = models.IntegerField()
+    CutOff = models.IntegerField()
+    College = models.TextField()
+    Course = models.TextField()
+    '''
+'''
+            elif instance.Allot_Program == -1:
+                # Decline and Upward scenario
+                stud.Allotted_College = "Not Allotted"
+                stud.Allotted_Course = "Not Allotted"
+                stud.save()
+'''
+
 

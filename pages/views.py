@@ -2,11 +2,41 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import random
 import smtplib
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from .models import Student, Institute, RankList, Set
+from .models import Student, Institute, RankList, Set, Aadhar, MarkSheets, Serv_Files
 from django.urls import reverse
+import cv2
+from pyzbar.pyzbar import decode
+import os
+import numpy as np
+from PIL import Image
 
+
+def decode_qr_code(image_data):
+    # Convert image data to OpenCV format
+    img = cv2.imdecode(np.frombuffer(image_data.read(), np.uint8), cv2.IMREAD_UNCHANGED)
+
+    # Decode the QR code
+    decoded_objects = decode(img)
+
+    # Check if there are any QR codes in the image
+    if not decoded_objects:
+        return None
+
+    # Extract data from decoded QR codes
+    qr_data_list = []
+    for obj in decoded_objects:
+        qr_data = {
+            "type": obj.type,
+            "data": obj.data.decode('utf-8'),
+            "position": obj.rect
+        }
+        data = obj.data.decode('utf-8')
+        qr_data_list.append(qr_data)
+
+    return int(data)
 # Create your views here.
 def index(request):
     return render(request,'index.html')
@@ -101,15 +131,51 @@ def register_db(request):
     father_name = request.POST['father_name']
     mother_name = request.POST['mother_name']
     tc = request.FILES.get('tc')
+    QR12th = decode_qr_code(certificate12th)
+    QR_Aadhar = decode_qr_code(aadhar)
+    adr_obj = Aadhar.objects.filter(QR_Number=QR_Aadhar).first()
+    mrk_obj = MarkSheets.objects.filter(QR_Number=QR12th).first()
+    if(adr_obj and mrk_obj):
+        pass
+    else:
+        return render(request,'invalid_docs.html')
+    print(QR12th,QR_Aadhar)
+    #adr_obj.DOB==dob and
+    print(adr_obj.DOB==dob and adr_obj.Aadhar_Number==mrk_obj.Aadhar_Number and name.lower()==adr_obj.Name.lower() and  name.lower()==mrk_obj.Name.lower() and year12th==mrk_obj.Year and adr_obj.Fathers_Name.lower()==father_name.lower() and adr_obj.Mothers_Name.lower()==mother_name.lower())
     
+    print("adr_obj.DOB:", type(adr_obj.DOB))
+    print("dob:", type(dob))
+    dob = datetime.strptime(dob, '%Y-%m-%d').date()
+    print(adr_obj.DOB==dob)
+    print(adr_obj.Aadhar_Number==mrk_obj.Aadhar_Number)
+    print(name.lower()==adr_obj.Name.lower())
+    print(name.lower()==mrk_obj.Name.lower())
+    print(int(year12th)==mrk_obj.Year)
+    print(adr_obj.Fathers_Name.lower()==father_name.lower())
+    print(adr_obj.Mothers_Name.lower()==mother_name.lower())
     
-    
-    
-    stud_user = Student(Allow_Login=1,Email_ID = email, Password = password, Name = name, DOB = dob, Address = address, Fathers_Name = father_name, Mothers_Name = mother_name, Aadhar_Card = aadhar, School_Name12th = school12th, Board_12th = board12th, Certificate_12th = certificate12th, Maths_Marks = maths, Physics_Marks = physics, Chemistry_Marks = chemistry, Cut_Off_Marks = cutoff, School_Name10th = school10th, Board_10th = board10th, Certificate_10th = certificate10th, TC = tc, Passport_Photo = photo, tenth_year = year10th, twelfth_year = year12th)
+    if(adr_obj and mrk_obj):
+        pass
+    else:
+        return render(request,'invalid_docs.html')
+    if(adr_obj.DOB==dob and adr_obj.Aadhar_Number==mrk_obj.Aadhar_Number and name.lower()==adr_obj.Name.lower() and  name.lower()==mrk_obj.Name.lower() and int(year12th)==mrk_obj.Year and adr_obj.Fathers_Name.lower()==father_name.lower() and adr_obj.Mothers_Name.lower()==mother_name.lower()):
+        
+        flag=1
+        print("hello",flag)
+        maths = mrk_obj.Maths
+        physics = mrk_obj.Physics
+        chemistry = mrk_obj.Chemistry
+        cutoff = mrk_obj.Cutoff
+    else:
+        maths=physics=chemistry=cutoff=0
+        flag=0  
+    print(adr_obj.DOB,dob)
+    print(adr_obj.Aadhar_Number,mrk_obj.Aadhar_Number,name.lower(),adr_obj.Name.lower(),name.lower(),mrk_obj.Name.lower(),year12th,mrk_obj.Year, adr_obj.Fathers_Name.lower(),father_name.lower(), adr_obj.Mothers_Name.lower(),mother_name.lower())
+    stud_user = Student(Allow_Login=flag,Email_ID = email, Password = password, Name = name, DOB = dob, Address = address, Fathers_Name = father_name, Mothers_Name = mother_name, Aadhar_Card = aadhar, School_Name12th = school12th, Board_12th = board12th, Certificate_12th = certificate12th, Maths_Marks = maths, Physics_Marks = physics, Chemistry_Marks = chemistry, Cut_Off_Marks = cutoff, School_Name10th = school10th, Board_10th = board10th, Certificate_10th = certificate10th, TC = tc, Passport_Photo = photo, tenth_year = year10th, twelfth_year = year12th,Log_Stat=0)
     stud_user.save()
-    stud = Student.objects.get(Email_ID=email)
-    rn = RankList(ID=stud.Student_ID,Name=name,DOB=dob,Fathers_Name=father_name,Maths_Marks=maths,Physics_Marks=physics,Chemistry_Marks=chemistry,Cut_Off_Marks=cutoff)
-    rn.save()
+    stud = Student.objects.filter(Email_ID=email).first()
+    #rn = RankList(ID=stud.Student_ID,Name=name,DOB=dob,Fathers_Name=father_name,Maths_Marks=maths,Physics_Marks=physics,Chemistry_Marks=chemistry,Cut_Off_Marks=cutoff,Rank=0)
+    #rn.save()
     return render(request,'success_create.html',{'user_id':stud.Student_ID})
     
 def student_login(request):
@@ -122,8 +188,10 @@ def student_login(request):
         pasw = request.POST.get('password')
         # Check if username and password match a student record
         student = Student.objects.filter(Student_ID=uname, Password=pasw).first()
-        if(student.Log_Stat==1):
-            return render(request,'acc_logdin.html')
+        if(student==None):
+            return render(request,'blocked_login.html')
+        #if(student.Log_Stat==1):
+        #    return render(request,'acc_logdin.html')
         student.Log_Stat=1
         student.save()
         if(student.Allow_Login==0):
@@ -232,6 +300,9 @@ def reset_password(request):
         return render(request,'password_successful.html')
     else:
         return render(request,'otp_fail.html')
+
+def download_manual(request):
+    return render(request,'view_manual.html')
 
 
     

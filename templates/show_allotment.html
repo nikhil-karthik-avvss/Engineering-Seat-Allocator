@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allotment</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        nav a:hover {
+            color: #ffd700;
+        }
+        .note-box 
+        {
+            background-color: #fffbcc;
+            border: 1px solid #ffd700;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'user_profile' %}">User Profile</a>
+    <a href="{% url 'view_crl' %}">Common Rank List</a>
+    <a href="{% url 'view_sm' %}">Seat Matrix</a>
+    <a href="{% url 'choice' %}">Choice Filling</a>
+    <a href="{% url 'view_allotment_stud' %}">Allotment Order</a>
+    <a href="{% url 'view_manual' %}">Manual</a>
+    <a href="{% url 'college_list' %}">Institutes</a>
+    <a href="{% url 'prev_allotment' %}">Previous Counselling Allotment</a>
+    <a href="{% url 'curr_allotment' %}">Current Counselling Allotment</a>
+    <a href="{% url 'logout_stud' %}">Log-out</a>
+  </nav>
+    <div class="note-box">
+          <p><strong>Note:</strong> This is the Course allotted to you</p>
+    </div>
+    <div class="container">
+        <h1>Allotment</h1>
+        
+        {% if setv.ReAllot == 1 %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>College Name</th>
+                        <th>Program</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ stud.Allotted_College }}</td>
+                        <td>{{ stud.Allotted_Course }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
+            {% if stud.Allot_Stat != 0  %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>College Name</th>
+                        <th>Program</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ stud.Allotted_College }}</td>
+                        <td>{{ stud.Allotted_Course }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <form method="post" action="{% url 'update_allotment' %}">
+                {% csrf_token %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>College Name</th>
+                            <th>Program</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ stud.Allotted_College }}</td>
+                            <td>{{ stud.Allotted_Course }}</td>
+                            <td>
+                                <select name="action">
+                                    <option value="accept">Accept</option>
+                                    <option value="accept_upward">Accept and Upward</option>
+                                    <option value="decline">Decline</option>
+                                    <option value="decline_upward">Decline and Upward</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit">Submit</button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
+

@@ -10,11 +10,15 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            height: 100vh; /* Full viewport height */
+            flex-direction: column;
         }
         .container {
             max-width: 960px;
             margin: 0 auto;
             padding: 20px;
+            flex-grow: 1;
         }
         h1 {
             color: #333;
@@ -39,29 +43,122 @@
             text-decoration: none;
             margin: 0 10px;
             transition: color 0.3s ease;
-            display: inline-block; /* Display as inline block to arrange sequentially */
+            display: inline-block;
         }
         nav a:hover {
-            color: #ffd700; /* Change color on hover */
+            color: #ffd700;
+        }
+
+        /* Main content styles */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #E0D6C3; /#D4C5AA; / New color */
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .step {
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid #FFFFFF; /* New border color */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+        .step:hover {
+            background-color: #2980b9;
+        }
+
+        /* Fancy Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 5px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #95a5a6;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'user_profile' %}">User Profile</a>
-        <a href="{% url 'view_crl' %}">Common Rank List</a>
-        <a href="{% url 'view_sm' %}">Seat Matrix</a>
-        <a href="{% url 'choice' %}">Choice Filling</a>
-        <a href="/index">Allotment Order</a>
-        <a href="/index">Manual</a>
-        <a href="/index">Settings</a>
-        <a href="{% url 'logout_stud' %}">Log-out</a>
-    </nav>
-    <div class="container">
-        <h1>Welcome to Engineering Seat Allocator</h1>
-        <p>Start exploring the options from the navigation above.</p>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'user_profile' %}">User Profile</a>
+    <a href="{% url 'view_crl' %}">Common Rank List</a>
+    <a href="{% url 'view_sm' %}">Seat Matrix</a>
+    <a href="{% url 'choice' %}">Choice Filling</a>
+    <a href="{% url 'view_allotment_stud' %}">Allotment Order</a>
+    <a href="{% url 'view_manual' %}">Manual</a>
+    <a href="{% url 'college_list' %}">Institutes</a>
+    <a href="{% url 'prev_allotment' %}">Previous Counselling Allotment</a>
+    <a href="{% url 'curr_allotment' %}">Current Counselling Allotment</a>
+    <a href="{% url 'logout_stud' %}">Log-out</a>
+  </nav>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <h2>Steps</h2>
+            <div class="step" id="registration">Registration</div>
+            <div class="step" id="common-rank-list">Publication of Common Rank List</div>
+            <div class="step" id="seat-matrix">Publication of Seat Matrix</div>
+            <div class="step" id="choice-filling">Choice Filling</div>
+            <div class="step" id="seat-allotment">Seat Allotment</div>
+            <div class="step" id="admission">Admission to the College</div>
+        </div>
+        <div class="container">
+            <h1>Welcome to Engineering Seat Allocator</h1>
+            <p>This is a student project. Start exploring the options from the navigation above.</p>
+        </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const data = {{ step_status|safe }};
+            updateStepColors(data);
+        });
+
+        function updateStepColors(data) {
+            const steps = {
+                registration: document.getElementById('registration'),
+                commonRankList: document.getElementById('common-rank-list'),
+                seatMatrix: document.getElementById('seat-matrix'),
+                choiceFilling: document.getElementById('choice-filling'),
+                seatAllotment: document.getElementById('seat-allotment'),
+                admission: document.getElementById('admission')
+            };
+
+            for (const [step, status] of Object.entries(data)) {
+                if (status === 'completed') {
+                    steps[step].style.backgroundColor = 'green';
+                    steps[step].style.borderColor = 'darkgreen';
+                    steps[step].style.color = 'white';
+                } else if (status === 'in-progress') {
+                    steps[step].style.backgroundColor = 'orange';
+                    steps[step].style.borderColor = 'darkorange';
+                    steps[step].style.color = 'white';
+                } else {
+                    steps[step].style.backgroundColor = 'red';
+                    steps[step].style.borderColor = 'darkred';
+                    steps[step].style.color = 'white';
+                }
+            }
+        }
+    </script>
 </body>
 </html>
-

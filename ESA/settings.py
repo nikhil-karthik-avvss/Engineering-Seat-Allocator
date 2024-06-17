@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-u@a43gm6*pd)i5l^$q_0id1r=p+ybo!=$%(qw3^*l+4j!&g_x_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -152,6 +152,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Set a timeout for the session (in seconds)
-#SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_COOKIE_AGE = 3600  # 1 hour
 
 

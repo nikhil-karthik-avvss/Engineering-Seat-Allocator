@@ -1,119 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seat Matrix</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .navbar {
-      background-color: #333;
-      overflow: hidden;
-    }
-    .navbar a {
-      float: left;
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 20px;
-      text-decoration: none;
-    }
-    .navbar a:hover {
-      background-color: #ddd;
-      color: black;
-    }
-    .container {
-      padding: 20px;
-    }
-    /* Add responsiveness */
-    @media screen and (max-width: 600px) {
-      .navbar a {
-        float: none;
-        display: block;
-        text-align: left;
-      }
-    }
-    /* Style form inputs */
-    form {
-      margin-top: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 12px;
-      box-sizing: border-box;
-    }
-    .note-box {
-      border: 1px solid #ccc;
-      background-color: #f0f0f0;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 5px;
-    }
-    .note-box p {
-      margin: 0;
-      color: #333;
-    }
-    /* Style table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #333;
-      color: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Matrix</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .navbar {
+            background-color: #4CAF50;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .info-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .info-box p {
+            margin: 0;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        @media screen and (max-width: 600px) {
+            .navbar a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="navbar">
   <a href="{% url 'institute_home' %}">Home</a>
   <a href="{% url 'profile' %}">Profile</a>
-  <a href="#common-rank-list">Common Rank List</a>
-  <a href="#seat-matrix">Seat Matrix</a>
-  <a href="#allotment-order">Allotment Order</a>
-  <a href="#settings">Settings</a>
-  <a href="#logout">Log-out</a>
+  <a href="{% url 'view_crl_inst' %}">Common Rank List</a>
+  <a href="{% url 'seatmatrix_input' %}">Seat Matrix</a>
+  <a href="{% url 'view_allotment_inst' %}">Allotment Order</a>
+  <a href="{% url 'download_manual' %}">Manual</a>
+  <a href="{% url 'logout' %}">Log-out</a>
 </div>
 
 <div class="container">
-  <h1>Seat Matrix</h1>
-  <div class="note-box">
-    <p>The courses available in your institution are recorded by you. You cannot edit it anymore. This is the list of all courses that you have submitted</p>
-  </div>
-
-  <!-- Table showing course and seat intake -->
-  <table>
-    <thead>
-      <tr>
-        <th>Course</th>
-        <th>Seat Intake</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for course in all_courses %}
-      <tr>
-        <td>{{ course.Program }}</td>
-        <td>{{ course.Seats_Available }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <h1>Seat Matrix</h1>
+    <div class="info-box">
+        <p>The following table displays the available courses and their respective seat intakes.</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Seat Intake</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in all_courses %}
+            <tr>
+                <td>{{ course.Program }}</td>
+                <td>{{ course.Seats_Available }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 </body>

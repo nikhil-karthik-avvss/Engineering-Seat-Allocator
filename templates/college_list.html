@@ -1,0 +1,85 @@
+<!-- templates/college_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        nav a:hover {
+            color: #ffd700;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .college {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .college img {
+            max-width: 100px;
+            margin-bottom: 10px;
+        }
+        .college a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .college a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'user_profile' %}">User Profile</a>
+    <a href="{% url 'view_crl' %}">Common Rank List</a>
+    <a href="{% url 'view_sm' %}">Seat Matrix</a>
+    <a href="{% url 'choice' %}">Choice Filling</a>
+    <a href="{% url 'view_allotment_stud' %}">Allotment Order</a>
+    <a href="{% url 'view_manual' %}">Manual</a>
+    <a href="{% url 'college_list' %}">Institutes</a>
+    <a href="{% url 'prev_allotment' %}">Previous Counselling Allotment</a>
+    <a href="{% url 'curr_allotment' %}">Current Counselling Allotment</a>
+    <a href="{% url 'logout_stud' %}">Log-out</a>
+  </nav>
+    <div class="container">
+        <h1>Colleges</h1>
+        {% for college in colleges %}
+        <div class="college">
+            <img src="{{ college.College_Image_URL }}" alt="{{ college.College_Name }}">
+            <h2>{{ college.College_Name }}</h2>
+            <a href="{% url 'college_detail' college_id=college.College_ID %}">View Details</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
+

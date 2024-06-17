@@ -6,13 +6,16 @@
   <title>User Profile</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
     }
     .navbar {
-      background-color: #333;
+      background-color: #4CAF50;
       overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .navbar a {
       float: left;
@@ -21,27 +24,56 @@
       text-align: center;
       padding: 14px 20px;
       text-decoration: none;
+      transition: background-color 0.3s ease;
     }
     .navbar a:hover {
-      background-color: #ddd;
-      color: black;
+      background-color: #45a049;
     }
     .container {
       max-width: 800px;
-      margin: 20px auto;
+      margin: 40px auto;
       padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
     }
     .profile-field {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
     .profile-field label {
       font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
     }
-    /* Add an active class for the active menu item */
-    .active {
-      background-color: #555;
+    .profile-field span {
+      display: block;
+      padding: 8px 12px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .profile-image {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile-image img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .profile-field a {
+      color: #4CAF50;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .profile-field a:hover {
+      color: #2980b9;
+    }
+    @media screen and (max-width: 600px) {
+      .navbar a {
+        float: none;
+        display: block;
+        text-align: left;
+      }
     }
   </style>
 </head>
@@ -49,43 +81,66 @@
 
 <div class="navbar">
   <a href="{% url 'institute_home' %}">Home</a>
-  <a href="#profile"{% if request.path == '/profile/' %} class="active"{% endif %}>Profile</a>
-  <a href="#common-rank-list">Common Rank List</a>
+  <a href="{% url 'profile' %}">Profile</a>
+  <a href="{% url 'view_crl_inst' %}">Common Rank List</a>
   <a href="{% url 'seatmatrix_input' %}">Seat Matrix</a>
-  <a href="#allotment-order">Allotment Order</a>
-  <a href="#settings">Settings</a>
-  <a href="#logout">Log-out</a>
+  <a href="{% url 'view_allotment_inst' %}">Allotment Order</a>
+  <a href="{% url 'download_manual' %}">Manual</a>
+  <a href="{% url 'logout' %}">Log-out</a>
 </div>
 
 <div class="container">
   <h1>User Profile</h1>
+  <div class="profile-image">
+    <img src="{{ request.session.College_Image_URL }}" alt="College Image">
+  </div>
   <div class="profile-field">
     <label for="college_id">College ID:</label>
-    <span id="college_id">{{ request.session.c_id }}</span>
+    <span id="college_id">{{ request.session.College_ID }}</span>
   </div>
   <div class="profile-field">
     <label for="college_name">College Name:</label>
-    <span id="college_name">{{ request.session.clg_name }}</span>
+    <span id="college_name">{{ request.session.College_Name }}</span>
   </div>
   <div class="profile-field">
     <label for="address">Address:</label>
-    <span id="address">{{ request.session.adr }}</span>
+    <span id="address">{{ request.session.Address }}</span>
   </div>
   <div class="profile-field">
     <label for="admin">Administrator's Name:</label>
-    <span id="admin">{{ request.session.admin }}</span>
+    <span id="admin">{{ request.session.Administrator_Name }}</span>
   </div>
   <div class="profile-field">
-    <label for="email">Email:</label>
-    <span id="email">{{ request.session.Email_ID }}</span>
+    <label for="contact">Contact Number:</label>
+    <span id="contact">{{ request.session.Contact_Number }}</span>
   </div>
   <div class="profile-field">
-    <label for="contact">Contact:</label>
-    <span id="contact">{{ request.session.contact }}</span>
+    <label for="tution_fee">Tuition Fee:</label>
+    <span id="tution_fee">{{ request.session.Tution_Fee }}</span>
   </div>
   <div class="profile-field">
-    <label for="certificate">Certificate:</label>
-    <a href="{{ certificate_url }}" target="_blank">Download Certificate</a>
+    <label for="hostel_fee_min">Hostel Fee (Min):</label>
+    <span id="hostel_fee_min">{{ request.session.Hostel_Fee_Min }}</span>
+  </div>
+  <div class="profile-field">
+    <label for="hostel_fee_max">Hostel Fee (Max):</label>
+    <span id="hostel_fee_max">{{ request.session.Hostel_Fee_Max }}</span>
+  </div>
+  <div class="profile-field">
+    <label for="bus_fee">Bus Fee:</label>
+    <span id="bus_fee">{{ request.session.Bus_Fee }}</span>
+  </div>
+  <div class="profile-field">
+    <label for="mand_bus">Mandatory Bus:</label>
+    <span id="mand_bus">{{ request.session.Mand_Bus }}</span>
+  </div>
+  <div class="profile-field">
+    <label for="mess_inc">Mess Inclusive:</label>
+    <span id="mess_inc">{{ request.session.Mess_Inc }}</span>
+  </div>
+  <div class="profile-field">
+    <label for="web">Website:</label>
+    <span id="web"><a href="{{ request.session.Web }}" target="_blank">{{ request.session.Web }}</a></span>
   </div>
 </div>
 

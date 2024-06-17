@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
-from pages.models import Student, SeatMatrix, Set, RankList, Institute, ChoiceListTable
+from django.shortcuts import render, get_object_or_404, redirect
+from pages.models import Student, SeatMatrix, Set, RankList, Institute, ChoiceListTable, image, Previous
 from datetime import date
 import json
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import logout as auth_logout
+from django.views.decorators.http import require_POST
 
 def home(request):
     '''uname = request.POST['uname']
@@ -40,7 +41,47 @@ def home(request):
     request.session['rank'] = student.Rank
     request.session['college'] = student.Allotted_College
     request.session['seat'] = student.Allotted_Course
-    return render(request,'home.html')
+    setv = Set.objects.first()
+    '''
+    data = {
+        'registration': 'completed',
+        'commonRankList': 'in-progress',
+        'seatMatrix': 'not-started',
+        'choiceFilling': 'not-started',
+        'seatAllotment': 'not-started',
+        'admission': 'not-started'
+    }
+    '''
+    data = {
+        'registration': 'not-started',
+        'commonRankList': 'not-started',
+        'seatMatrix': 'not-started',
+        'choiceFilling': 'not-started',
+        'seatAllotment': 'not-started',
+        'admission': 'not-started'
+    }
+    if(setv.Allow_Register==1):
+        data['registration']='in-progress'
+    else:
+        data['registration']='not-started'
+    if(setv.Allow_CRL==1):
+        data['registration']='completed'
+        data['commonRankList']='completed'
+    if(setv.Allow_SM==1):
+        data['registration']='completed'
+        data['seatMatrix']='completed'
+    if(setv.Allow_CF==1):
+        data['registration']='completed'
+        data['seatMatrix']='completed'
+        data['choiceFilling']='in-progress'
+    if(setv.Show_Allotted==1):
+        data['registration']='completed'
+        data['choiceFilling']='completed'
+        data['seatAllotment']='completed'
+        data['admission']='completed'
+    
+    request.session['step_status'] = data
+    return render(request,'home.html',{'step_status': data})
 
 def user_profile(request):
     return render(request,'student_profile.html')
@@ -107,45 +148,24 @@ def choice(request):
         )
             choice_obj.save()
             print(f"Saved choice {cn} to the database")
-
-
-        '''
-        selected_choices = {}
-        num = 0  # Initialize the choice number counter
-        #print(request.POST.items())
-        sid = request.session.get('uname')
-        for key, value in request.POST.items():
-            if key.startswith('college_id_'):
-                num += 1  # Increment choice number for each valid choice
-                choice_number = key.split('_')[-1]
-                #choice_number
-                selected_choices[num] = {
-                    'college_id': value,
-                    'college_name': request.POST.get('college_name_' + choice_number),
-                    'program': request.POST.get('program_' + choice_number)
-                }
-        sid = request.session.get('uname')
-        for cn in selected_choices.keys():
-            choice_obj = ChoiceListTable(
-                Student_Rank=rank,
-                Student_ID=int(sid),
-                College=selected_choices[cn]['college_name'],
-                Program=selected_choices[cn]['program'],
-                Choice_Number=int(cn),  # Use the incremented choice number
-                College_ID=int(selected_choices[cn]['college_id'])
-            )
-            choice_obj.save()
-        '''
             #print(selected_choices.keys())
-        return render(request,'choice_show.html')
+            
+        choice_obj = ChoiceListTable.objects.filter(Student_ID=sid)
+        return render(request,'choice_show.html',{'choices':choice_obj})
     all_records = SeatMatrix.objects.all()
+    clg_names = SeatMatrix.objects.values('College_ID').distinct()
+    print(clg_names)
     for rec in all_records:
         print(rec.College_ID)
     choice_obj = ChoiceListTable.objects.filter(Student_ID=sid)
     if(choice_obj):
         return render(request,'choice_show.html',{'choices':choice_obj})
     else:
-        return render(request,'choice_fill.html',{'colleges':all_records})
+        setv = Set.objects.first()
+        if(setv.Allow_CF==1):
+            return render(request,'choice_fill.html',{'colleges':all_records,'clg_names':clg_names})
+        else:
+            return render(request,'deny_cf.html')
 
 def get_college_name(request):
     college_id = request.GET.get('college_id')
@@ -161,12 +181,76 @@ def get_programs(request):
 
 def logout_stud(request):
     uname = request.session.get('uname')
+    print(uname)
     student = Student.objects.filter(Student_ID=uname).first()
     student.Log_Stat=0
     student.save()
     request.session.flush()
     auth_logout(request)
     return render(request,'logout.html')
+
+def view_allotment_stud(request):
+    setv = Set.objects.first()
+    if setv.Show_Allotted == 1:
+        uname = request.session.get('uname')
+        stud = Student.objects.filter(Student_ID=uname).first()
+        setv = Set.objects.first()
+        print(setv.ReAllot)
+        return render(request, 'show_allotment.html', {'stud': stud,'setv':setv})
+    else:
+        return render(request, 'deny_allotment.html')
+
+@require_POST
+def update_allotment(request):
+    uname = request.session.get('uname')
+    stud = Student.objects.filter(Student_ID=uname).first()
+    print('Hello')
+    '''
+    if not stud or stud.Allot_Stat != 0:  # Assuming 0 means the allotment is accepted
+        return redirect('view_allotment_stud')
+    '''
+    action = request.POST.get('action', '')
+    if action:
+        allot_stat = {
+            'accept': 2,
+            'accept_upward': 3,
+            'decline': -1,
+            'decline_upward': -2,
+        }.get(action, 1)  # Default to 1 if action is unrecognized
+
+        stud.Allot_Stat = allot_stat
+        print(stud.Allot_Stat,allot_stat)
+        stud.save()
+
+    return redirect('home')
+    
+def view_manual(request):
+    imgs = image.objects.filter(flag=0)
+    print(imgs)
+    return render(request,'stud_manual.html',{'images':imgs})
+
+def college_list(request):
+    colleges = Institute.objects.all().order_by('College_ID')
+    #stud = Student.objects.all().order_by('Rank')
+    return render(request, 'college_list.html', {'colleges': colleges})
+
+def college_detail(request, college_id):
+    college = get_object_or_404(Institute, pk=college_id)
+    seat_matrix = SeatMatrix.objects.filter(College_ID=college_id)
+    return render(request, 'college_detail.html', {'college': college, 'seat_matrix': seat_matrix})
+
+def prev_allotment(request):
+    previous=Previous.objects.all().exclude(Rank=0).order_by('Rank')
+    return render(request,'prev_allotment_stud.html',{'students':previous})
+    pass
+
+def curr_allotment(request):
+    setv = Set.objects.first()
+    if(setv.Show_Allotted==1):
+        stud = Student.objects.exclude(Rank=0).order_by('Rank')
+        return render(request, 'curr_allotment_stud.html',{'students':stud})
+    else:
+        return render(request, 'deny_allotment.html')
 
 
 
