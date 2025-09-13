@@ -59,7 +59,7 @@ python3 manage.py migrate
 
 ---
 
-## ▶️ Run the Server
+## Run the Server
 
 Start the development server:
 
@@ -85,9 +85,6 @@ You can access the project at:
 ## Deployment
 
 The project is hosted on **PythonAnywhere**:
-👉 [https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index)
+[https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index)
 
 ---
-
-Do you want me to also add **screenshots & badges (Django, Python, PostgreSQL, etc.)** to make it look more professional for GitHub?
-```
