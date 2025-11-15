@@ -71,7 +71,7 @@ By default, Django runs on **`http://localhost:8000/`**
 You can access the project at:
 
 * Local: [http://localhost:8000/index](http://localhost:8000/index)
-* Hosted: [https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index)
+* Hosted: [https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index) (will be decommissioned soon)
 
 ---
 
@@ -85,6 +85,6 @@ You can access the project at:
 ## Deployment
 
 The project is hosted on **PythonAnywhere**:
-[https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index)
+[https://nikh10.pythonanywhere.com/index](https://nikh10.pythonanywhere.com/index) (will be decommissioned soon)
 
 ---
